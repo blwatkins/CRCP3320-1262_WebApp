@@ -1,0 +1,21 @@
+{
+  "name": "crcp3320-1262_webapp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web application example for CRCP 3320; Spring 2026 term.",
+  "homepage": "https://github.com/blwatkins/CRCP3320-1262_WebApp#readme",
+  "bugs": {
+    "url": "https://github.com/blwatkins/CRCP3320-1262_WebApp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blwatkins/CRCP3320-1262_WebApp.git"
+  },
+  "license": "MIT",
+  "author": "brittni watkins",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
