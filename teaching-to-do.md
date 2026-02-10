@@ -1,8 +1,6 @@
 # Teaching TO-DO
 
 ## GitHub
-- merge conflicts
-- dependabot
 - branches
 - pull requests
 
