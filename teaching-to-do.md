@@ -4,6 +4,12 @@
 - branches
 - pull requests
 
+## HTML
+- syntax
+
+## CSS
+-syntax
+
 ## JavaScript
 - arrow function syntax
 
