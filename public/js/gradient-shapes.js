@@ -78,7 +78,7 @@ class GradientPolygon {
             const colorsIndex = index % this.colors.length;
             const fillColor = this.colors[colorsIndex];
             fill(fillColor);
-            vertex(vtx.x, vtx.y)
+            vertex(vtx.x, vtx.y);
         });
 
         endShape(CLOSE);
