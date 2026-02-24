@@ -25,21 +25,24 @@
         <canvas id="splashCanvas"></canvas>
         <script>
             const canvas = document.getElementById('splashCanvas');
-            const ctx = canvas.getContext('2d');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                if (ctx) {
+                    function resizeCanvas() {
+                        canvas.width = window.innerWidth;
+                        canvas.height = window.innerHeight;
+                        drawRedBackground();
+                    }
 
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                drawRedBackground();
+                    function drawRedBackground() {
+                        ctx.fillStyle = 'red';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    }
+
+                    window.addEventListener('resize', resizeCanvas);
+                    resizeCanvas();
+                }
             }
-
-            function drawRedBackground() {
-                ctx.fillStyle = 'red';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
-
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
         </script>
         <nav class="navbar bg-primary-subtle">
             <div class="container-fluid">
