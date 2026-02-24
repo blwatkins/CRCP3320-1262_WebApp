@@ -18,7 +18,6 @@ function setup() {
         ['#342fd464', '#2d59d264', '#2d88cd64', '#2db3c764', '#2ec2a864']
     ];
 
-    shape = new GradientPolygon();
     buildPolygons();
 }
 
