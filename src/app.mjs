@@ -1,5 +1,7 @@
 import express from 'express';
 
+import { ColorGenerator } from './color-generator.mjs';
+
 const app = express();
 const port = 3000;
 
@@ -13,6 +15,11 @@ app.get('/', (request, response) => {
 
 app.get('/random-color', (request, response) => {
     response.render('random-color', { title: "Random Color" });
+});
+
+app.get('/api/random-color', (request, response) => {
+    const hexColor = ColorGenerator.getHexColor();
+    response.json({ hexColor });
 });
 
 app.listen(port, () => {
