@@ -5,7 +5,26 @@
         <%- include('include/header-nav') %>
         <div class="container py-2">
             <h1>Random Color!</h1>
+            <div class="card" style="width: 100%">
+                <div id="color-div" class="card-img-top" style="height: 20rem; background-color: #000000;">
+                    &nbsp;
+                </div>
+                <div class="card-body">
+                    <span class="card-title">color name goes here!</span>
+                </div>
+            </div>
         </div>
         <%- include('include/footer-nav') %>
+        <script>
+            (() => {
+                const colorDivID = 'color-div';
+
+                const colorDivElement = document.getElementById(colorDivID);
+
+                if (colorDivElement) {
+                    colorDivElement.style.backgroundColor = '#FF0000';
+                }
+            })();
+        </script>
     </body>
 </html>
