@@ -8,11 +8,11 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.get('/', (request, response) => {
-    response.render('index');
+    response.render('index', { title: "CRCP 3320 App" });
 });
 
 app.get('/random-color', (request, response) => {
-    response.send('hello, world!');
+    response.render('random-color', { title: "Random Color" });
 });
 
 app.listen(port, () => {
