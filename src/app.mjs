@@ -17,9 +17,10 @@ app.get('/random-color', (request, response) => {
     response.render('random-color', { title: "Random Color" });
 });
 
-app.get('/api/random-color', (request, response) => {
-    const hexColor = ColorGenerator.getHexColor();
-    response.json({ hexColor });
+app.get('/api/random-color', async (request, response) => {
+    const colorHex = ColorGenerator.getHexColor();
+    const colorData = await ColorGenerator.getColorData(colorHex);
+    response.json(colorData);
 });
 
 app.listen(port, () => {
