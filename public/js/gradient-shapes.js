@@ -40,7 +40,7 @@ class GradientPolygon {
 
         if (colors) {
             if (Array.isArray(colors)) {
-                this.colors = colors.map(element => {
+                this.colors = colors.map((element) => {
                     if (element instanceof p5.Color) {
                         return element;
                     } else if (typeof element === 'string') {
@@ -51,7 +51,7 @@ class GradientPolygon {
                 });
             }
         }
-        
+
         if (!this.colors || this.colors.length === 0) {
             this.colors = [color('#FF000064'), color('#0000FF64')];
         }
