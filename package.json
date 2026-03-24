@@ -14,7 +14,9 @@
   "license": "MIT",
   "author": "brittni watkins",
   "type": "module",
-  "main": "index.js",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "start": "node src/app.mjs",
     "dev": "nodemon src/app.mjs",
