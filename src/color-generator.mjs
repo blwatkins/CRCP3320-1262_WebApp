@@ -1,8 +1,16 @@
 export class ColorGenerator {
-    static getHexColor() {
-        const r = Math.floor(Math.random() * 255);
-        const g = Math.floor(Math.random() * 255);
-        const b = Math.floor(Math.random() * 255);
+    static getHexColor({ minR, maxR, minG, maxG, minB, maxB }) {
+        if (minR === undefined) minR = 0;
+        if (maxR === undefined) maxR = 255;
+        if (minG === undefined) minG = 0;
+        if (maxG === undefined) maxG = 255;
+        if (minB === undefined) minB = 0;
+        if (maxB === undefined) maxB = 255;
+
+        const r = Math.floor(Math.random() * (maxR - minR + 1)) + minR;
+        const g = Math.floor(Math.random() * (maxG - minG + 1)) + minG;
+        const b = Math.floor(Math.random() * (maxB - minB + 1)) + minB;
+
         const rHex = r.toString(16).padStart(2, '0');
         const gHex = g.toString(16).padStart(2, '0');
         const bHex = b.toString(16).padStart(2, '0');
