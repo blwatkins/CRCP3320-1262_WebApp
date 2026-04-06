@@ -18,21 +18,23 @@
     "node": ">=24"
   },
   "scripts": {
-    "start": "node src/app.mjs",
-    "dev": "nodemon src/app.mjs",
+    "start": "dotenvx run -- node src/app.mjs",
+    "dev": "dotenvx run -- nodemon src/app.mjs",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint:server": "eslint --config eslint.config.server.mjs .",
     "lint:client": "eslint --config eslint.config.client.mjs ./public/js/",
     "lint:all": "npm run lint:server && npm run lint:client"
   },
   "dependencies": {
-    "ejs": "^4.0.1",
-    "express": "^5.2.1"
+    "@dotenvx/dotenvx": "^1.60.0",
+    "ejs": "^5.0.1",
+    "express": "^5.2.1",
+    "mysql2": "^3.20.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
-    "eslint": "^10.1.0",
+    "eslint": "^10.2.0",
     "eslint-plugin-es-x": "^9.6.0",
     "eslint-plugin-n": "^17.24.0",
     "eslint-plugin-security": "^4.0.0",
