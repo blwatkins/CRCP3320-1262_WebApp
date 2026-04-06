@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { ColorGenerator } from './color-generator.mjs';
-import { DatabaseClient } from './database-client.mjs';
+import { MySQLClient } from './mysql-client.mjs';
 import { parseRGBComponent } from './utils.mjs';
 
 const app = express();
@@ -11,12 +11,8 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-try {
-    await DatabaseClient.init();
-} catch (error) {
-    console.error(error);
-    throw error;
-}
+const db = MySQLClient;
+db.init();
 
 app.get('/', (request, response) => {
     response.render('index', { title: 'CRCP 3320 App' });
@@ -26,10 +22,10 @@ app.get('/random-color', (request, response) => {
     response.render('random-color', { title: 'Random Color' });
 });
 
-app.get('/all-tiles', async (request, response) => {
+app.get('/most-recent-tiles', async (request, response) => {
     try {
-        const tiles = await DatabaseClient.queryAllTiles();
-        response.send(tiles.toString());
+        const tiles = await db.queryMostRecentTiles();
+        response.render('tiles', { title: "Today's Tiles", hexColors: tiles });
     } catch (error) {
         console.error(error);
         response.status(500).send('Internal Server Error');
