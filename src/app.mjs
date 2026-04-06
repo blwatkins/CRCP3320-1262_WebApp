@@ -12,7 +12,7 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 const db = SequelizeClient;
-db.init();
+await db.init();
 
 app.get('/', (request, response) => {
     response.render('index', { title: 'CRCP 3320 App' });
