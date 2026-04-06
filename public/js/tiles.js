@@ -1,4 +1,4 @@
-const hexExpression = /^#[0-9a-f-A-F]{6}$/
+const hexExpression = /^#[0-9a-f-A-F]{6}$/;
 let grid;
 
 function setup() {
