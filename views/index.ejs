@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('include/head', { title }) %>
+    <body style="height: 100vh;">
+        <%- include('include/header-nav') %>
+        <div class="container py-2 h-75 d-flex flex-column justify-content-center">
+            <h1 class="text-center display-1 border border-primary rounded p-3 text-primary"><%= title %></h1>
+            <div id="pixel-art-links" class="row m-3 p-1">
+                <h2 class="text-center">Pixel Art Links</h2>
+                <div class="col text-center p-1">
+                    <a href="/random-color" class="btn btn-primary w-50" role="button">Random Color</a>
+                </div>
+                <div class="col text-center p-1">
+                    <a href="/tiles" class="btn btn-primary w-50" role="button">Today's Tiles</a>
+                </div>
+                <div class="col text-center p-1">
+                    <a href="/most-recent-tiles" class="btn btn-primary w-50" role="button">Most Recent Tiles</a>
+                </div>
+            </div>
+            <div id="sketch-links" class="row m-3 p-1">
+                <h2 class="text-center">Sketch Links</h2>
+                <div class="col text-center p-1">
+                    <a href="./sketch.html" class="btn btn-primary w-50" role="button">Sketch</a>
+                </div>
+                <div class="col text-center p-1">
+                    <a href="./gradient-shapes.html" class="btn btn-primary w-50" role="button">Gradient Shapes</a>
+                </div>
+            </div>
+        </div>
+        <%- include('include/footer-nav') %>
+    </body>
+</html>
