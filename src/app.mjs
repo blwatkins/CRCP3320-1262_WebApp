@@ -36,6 +36,10 @@ app.get('/all-tiles', async (request, response) => {
     }
 });
 
+app.get('/tiles', (request, response) => {
+    response.send("today's tiles");
+});
+
 app.get('/tiles/:date', (request, response) => {
     const dateExpression = /^[0-3][0-9]-[0-3][0-9]-[0-9]{4}$/;
     const requestDate = request.params.date;
