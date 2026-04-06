@@ -36,7 +36,7 @@ class TilesGrid {
 
         for (let row = 0; row < this.rows; row++) {
             for (let col = 0; col < this.columns; col++) {
-                const index = (row * this.rows) + col;
+                const index = (row * this.columns) + col;
 
                 if (index >= 0 && index < this.tileColors.length) {
                     const x = tileWidth * col;
