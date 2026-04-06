@@ -37,7 +37,7 @@ app.get('/all-tiles', async (request, response) => {
 });
 
 app.get('/tiles', (request, response) => {
-    response.send("today's tiles");
+    response.render('tiles', { title: "Today's Tiles", hexColors: ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#000000', '#FFFFFF', '#0000FF', 'cat'] });
 });
 
 app.get('/tiles/:date', (request, response) => {
