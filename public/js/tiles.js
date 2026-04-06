@@ -15,6 +15,7 @@ function setup() {
 
 function draw() {
     grid.draw();
+    noLoop();
 }
 
 class TilesGrid {
@@ -62,5 +63,5 @@ function smallestSquare(value) {
         return result;
     }
 
-    throw new Error('Unsupported value');
+    return 1;
 }

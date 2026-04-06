@@ -75,10 +75,11 @@ app.get('/api/random-color', async (request, response) => {
         try {
             const colorHex = ColorGenerator.getHexColor({ minR, maxR, minG, maxG, minB, maxB });
             const colorData = await ColorGenerator.getColorData(colorHex);
+
             if (colorData) {
                 response.json(colorData);
             } else {
-                response.status(500).json({ error: 'Internal Server Error.' });
+                response.status(400).json({ error: 'Bad Request.' });
             }
         } catch (error) {
             response.status(500).json({ error: 'Internal Server Error.' });
