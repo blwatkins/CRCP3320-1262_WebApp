@@ -1,6 +1,8 @@
 import express from 'express';
 
 import { ColorGenerator } from './color-generator.mjs';
+import { DatabaseClient } from "./database-client.mjs";
+import { parseRGBComponent } from "./utils.mjs";
 
 const app = express();
 const port = 3000;
@@ -8,6 +10,13 @@ const port = 3000;
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.set('views', 'views');
+
+try {
+    await DatabaseClient.init();
+} catch (error) {
+    console.error(error);
+    process.exit(1);
+}
 
 app.get('/', (request, response) => {
     response.render('index', { title: "CRCP 3320 App" });
@@ -17,31 +26,34 @@ app.get('/random-color', (request, response) => {
     response.render('random-color', { title: "Random Color" });
 });
 
-function processNumberParam(input) {
-    if (typeof input === 'number' && !isNaN(input) && input >= 0 && input <= 255) {
-        return Math.floor(input);
+app.get('/all-tiles', async (request, response) => {
+    try {
+        const tiles = await DatabaseClient.queryAllTiles();
+        response.send(tiles.toString());
+    } catch (error) {
+        console.error(error);
+        response.status(500).send('Internal Server Error');
     }
+});
 
-    if (input === undefined) {
-        return undefined;
+app.get('/tiles/:date', (request, response) => {
+    const dateExpression = /^[0-3][0-9]-[0-3][0-9]-[0-9]{4}$/;
+    const requestDate = request.params.date;
+
+    if (dateExpression.test(requestDate)) {
+        response.send('Tile Date');
+    } else {
+        response.status(400).send('Bad Request: Invalid Date');
     }
-
-    const parsed = parseInt(input, 10);
-
-    if (!isNaN(parsed) && parsed >= 0 && parsed <= 255) {
-        return Math.floor(parsed);
-    }
-
-    return null;
-}
+});
 
 app.get('/api/random-color', async (request, response) => {
-    const minR = processNumberParam(request.query.minR);
-    const maxR = processNumberParam(request.query.maxR);
-    const minG = processNumberParam(request.query.minG);
-    const maxG = processNumberParam(request.query.maxG);
-    const minB = processNumberParam(request.query.minB);
-    const maxB = processNumberParam(request.query.maxB);
+    const minR = parseRGBComponent(request.query.minR);
+    const maxR = parseRGBComponent(request.query.maxR);
+    const minG = parseRGBComponent(request.query.minG);
+    const maxG = parseRGBComponent(request.query.maxG);
+    const minB = parseRGBComponent(request.query.minB);
+    const maxB = parseRGBComponent(request.query.maxB);
 
     if (minR === null || maxR === null || minG === null || maxG === null || minB === null || maxB === null) {
        response.status(400).json({ error: "Invalid query parameters. Parameters must be integers between 0 and 255." });
