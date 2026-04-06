@@ -11,9 +11,22 @@ const connectionPool = await mysql.createPool({
 });
 
 export class MySQLClient extends DatabaseClient {
-    static init() {
+    static async init() {
         if (!connectionPool) {
             throw new Error('Missing connection pool');
+        }
+
+        let connection;
+
+        try {
+            connection = await connectionPool.getConnection();
+            await connection.ping();
+        } catch (error) {
+            throw new Error(`Unable to establish MySQL connection during startup: ${error.message}`);
+        } finally {
+            if (connection) {
+                connection.release();
+            }
         }
     }
 
