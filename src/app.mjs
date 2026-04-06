@@ -25,7 +25,7 @@ app.get('/random-color', (request, response) => {
 app.get('/most-recent-tiles', async (request, response) => {
     try {
         const tiles = await db.queryMostRecentTiles();
-        response.render('tiles', { title: "Today's Tiles", hexColors: tiles });
+        response.render('tiles', { title: 'Most Recent Tiles', hexColors: tiles });
     } catch (error) {
         console.error(error);
         response.status(500).send('Internal Server Error');
@@ -33,7 +33,7 @@ app.get('/most-recent-tiles', async (request, response) => {
 });
 
 app.get('/tiles', (request, response) => {
-    response.render('tiles', { title: "Today's Tiles", hexColors: ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#000000', '#FFFFFF', '#0000FF', 'cat'] });
+    response.render('tiles', { title: "Today's Tiles", hexColors: ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#000000', '#FFFFFF', '#0000FF'] });
 });
 
 app.get('/tiles/:date', (request, response) => {
@@ -58,9 +58,17 @@ app.get('/api/random-color', async (request, response) => {
     if (minR === null || maxR === null || minG === null || maxG === null || minB === null || maxB === null) {
         response.status(400).json({ error: 'Invalid query parameters. Parameters must be integers between 0 and 255.' });
     } else {
-        const colorHex = ColorGenerator.getHexColor({ minR, maxR, minG, maxG, minB, maxB });
-        const colorData = await ColorGenerator.getColorData(colorHex);
-        response.json(colorData);
+        try {
+            const colorHex = ColorGenerator.getHexColor({ minR, maxR, minG, maxG, minB, maxB });
+            const colorData = await ColorGenerator.getColorData(colorHex);
+            if (colorData) {
+                response.json(colorData);
+            } else {
+                response.status(500).json({ error: 'Internal Server Error.' });
+            }
+        } catch (error) {
+            response.status(500).json({ error: 'Internal Server Error.' });
+        }
     }
 });
 

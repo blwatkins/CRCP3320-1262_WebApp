@@ -7,6 +7,10 @@ export class ColorGenerator {
         if (minB === undefined) minB = 0;
         if (maxB === undefined) maxB = 255;
 
+        if (minR > maxR || minG > maxG || minB > maxB) {
+            throw new Error('All minimum values must be less than their corresponding maximum values.');
+        }
+
         const r = Math.floor(Math.random() * (maxR - minR + 1)) + minR;
         const g = Math.floor(Math.random() * (maxG - minG + 1)) + minG;
         const b = Math.floor(Math.random() * (maxB - minB + 1)) + minB;

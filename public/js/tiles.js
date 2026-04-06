@@ -1,4 +1,4 @@
-const hexExpression = /^#[0-9a-f-A-F]{6}$/;
+const hexExpression = /^(#[0-9a-f-A-F]{6}|#[0-9a-f-A-F]{8})$/;
 let grid;
 
 function setup() {
@@ -19,9 +19,15 @@ function draw() {
 
 class TilesGrid {
     constructor(colorsArray) {
-        this.tileColors = colorsArray.filter(color => hexExpression.test(color));
-        this.rows = smallestSquare(this.tileColors.length);
-        this.columns = this.rows;
+        if (colorsArray && colorsArray.length > 0) {
+            this.tileColors = colorsArray.filter(color => hexExpression.test(color));
+            this.rows = smallestSquare(this.tileColors.length);
+            this.columns = this.rows;
+        } else {
+            this.tileColors = [];
+            this.rows = 1;
+            this.columns = 1;
+        }
     }
 
     draw() {

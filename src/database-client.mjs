@@ -4,6 +4,6 @@ export class DatabaseClient {
     }
 
     static queryMostRecentTiles(limit = 100) {
-        throw new Error('Operation not supported: init() must be implemented by subclass');
+        throw new Error('Operation not supported: queryMostRecentTiles() must be implemented by subclass');
     }
 }

@@ -5,7 +5,7 @@ const sequelize = new Sequelize({
     dialect: 'mysql',
     logging: false,
     host: process.env.MYSQL_HOST,
-    port: Number.parseInt(process.env.MYSQL_PORT),
+    port: Number.parseInt(process.env.MYSQL_PORT, 10),
     username: process.env.MYSQL_USERNAME,
     database: process.env.MYSQL_DATABASE,
     password: process.env.MYSQL_PASSWORD
@@ -26,7 +26,10 @@ Tile.init(
         },
         colorHex: {
             type: DataTypes.STRING(9),
-            allowNull: false
+            allowNull: false,
+            validate: {
+                is: /^(#[0-9a-f-A-F]{6}|#[0-9a-f-A-F]{8})$/
+            }
         }
     },
     { sequelize, modelName: 'tile', createdAt: false, updatedAt: false }
