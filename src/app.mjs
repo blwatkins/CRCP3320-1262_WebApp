@@ -47,9 +47,9 @@ app.get('/tiles/:date', (request, response) => {
         const year = Number.parseInt(dateMatch[3], 10);
         const parsedDate = new Date(year, month - 1, day);
         const isValidCalendarDate =
-            parsedDate.getFullYear() === year &&
-            parsedDate.getMonth() === month - 1 &&
-            parsedDate.getDate() === day;
+            parsedDate.getFullYear() === year
+            && parsedDate.getMonth() === month - 1
+            && parsedDate.getDate() === day;
 
         if (isValidCalendarDate) {
             response.send('Tile Date');
