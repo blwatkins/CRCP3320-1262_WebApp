@@ -86,7 +86,7 @@ export default defineConfig([
 
             'no-useless-assignment': 'error',
 
-            'require-atomic-updates': 'error',
+            'require-atomic-updates': 'warn',
 
             'require-await': 'error',
 

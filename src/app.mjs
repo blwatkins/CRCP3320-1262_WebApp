@@ -1,8 +1,8 @@
 import express from 'express';
 
 import { ColorGenerator } from './color-generator.mjs';
-import { DatabaseClient } from "./database-client.mjs";
-import { parseRGBComponent } from "./utils.mjs";
+import { DatabaseClient } from './database-client.mjs';
+import { parseRGBComponent } from './utils.mjs';
 
 const app = express();
 const port = 3000;
@@ -15,15 +15,15 @@ try {
     await DatabaseClient.init();
 } catch (error) {
     console.error(error);
-    process.exit(1);
+    throw error;
 }
 
 app.get('/', (request, response) => {
-    response.render('index', { title: "CRCP 3320 App" });
+    response.render('index', { title: 'CRCP 3320 App' });
 });
 
 app.get('/random-color', (request, response) => {
-    response.render('random-color', { title: "Random Color" });
+    response.render('random-color', { title: 'Random Color' });
 });
 
 app.get('/all-tiles', async (request, response) => {
@@ -56,7 +56,7 @@ app.get('/api/random-color', async (request, response) => {
     const maxB = parseRGBComponent(request.query.maxB);
 
     if (minR === null || maxR === null || minG === null || maxG === null || minB === null || maxB === null) {
-       response.status(400).json({ error: "Invalid query parameters. Parameters must be integers between 0 and 255." });
+        response.status(400).json({ error: 'Invalid query parameters. Parameters must be integers between 0 and 255.' });
     } else {
         const colorHex = ColorGenerator.getHexColor({ minR, maxR, minG, maxG, minB, maxB });
         const colorData = await ColorGenerator.getColorData(colorHex);

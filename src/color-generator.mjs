@@ -37,7 +37,7 @@ export class ColorGenerator {
                             colorHex,
                             colorName: colorData.name,
                             bestContrast: colorData.bestContrast
-                        }
+                        };
                     }
                 }
             } catch (error) {
