@@ -1,8 +1,8 @@
 import express from 'express';
 
 import { ColorGenerator } from './color-generator.mjs';
-import { MySQLClient } from './mysql-client.mjs';
 import { parseRGBComponent } from './utils.mjs';
+import { SequelizeClient } from './sequelize-client.mjs';
 
 const app = express();
 const port = 3000;
@@ -11,7 +11,7 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-const db = MySQLClient;
+const db = SequelizeClient;
 db.init();
 
 app.get('/', (request, response) => {
@@ -46,8 +46,7 @@ app.get('/tiles/:date', (request, response) => {
         const day = Number.parseInt(dateMatch[2], 10);
         const year = Number.parseInt(dateMatch[3], 10);
         const parsedDate = new Date(year, month - 1, day);
-        const isValidCalendarDate =
-            parsedDate.getFullYear() === year
+        const isValidCalendarDate = parsedDate.getFullYear() === year
             && parsedDate.getMonth() === month - 1
             && parsedDate.getDate() === day;
 

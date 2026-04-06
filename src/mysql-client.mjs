@@ -13,20 +13,13 @@ const connectionPool = await mysql.createPool({
 export class MySQLClient extends DatabaseClient {
     static async init() {
         if (!connectionPool) {
-            throw new Error('Missing connection pool');
+            throw new Error('Missing connection pool.');
         }
 
-        let connection;
-
         try {
-            connection = await connectionPool.getConnection();
-            await connection.ping();
+            await connectionPool.execute('SELECT 1 + 1');
         } catch (error) {
-            throw new Error(`Unable to establish MySQL connection during startup: ${error.message}`);
-        } finally {
-            if (connection) {
-                connection.release();
-            }
+            throw new Error('Unable to establish MySQL connection.', { cause: error });
         }
     }
 
