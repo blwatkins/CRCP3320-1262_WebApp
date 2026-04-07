@@ -24,6 +24,7 @@ Tile.init(
         },
         submissionTime: {
             type: DataTypes.DATE(3),
+            defaultValue: DataTypes.NOW(),
             allowNull: false
         },
         colorHex: {
@@ -77,8 +78,7 @@ export class SequelizeClient extends DatabaseClient {
 
         const tile = await Tile.create(
             {
-                colorHex,
-                submissionTime: '2026-04-07 17:37:47.000'
+                colorHex
             }
         );
 
