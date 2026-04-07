@@ -1,5 +1,7 @@
 import { DataTypes, Sequelize, Model } from 'sequelize';
+
 import { DatabaseClient } from './database-client.mjs';
+import { StringValidator } from './string-validator.mjs';
 
 const sequelize = new Sequelize({
     dialect: 'mysql',
@@ -36,6 +38,9 @@ Tile.init(
 );
 
 export class SequelizeClient extends DatabaseClient {
+    /**
+     * @returns {Promise<void>}
+     */
     static async init() {
         await sequelize.authenticate();
     }
@@ -56,5 +61,37 @@ export class SequelizeClient extends DatabaseClient {
         });
 
         return tiles.map(tile => tile.colorHex);
+    }
+
+    /**
+     * @param colorHex {string}
+     * @returns {Promise<{status: 200|400|500, message: string}>}
+     */
+    static async insertTile(colorHex) {
+        if (!StringValidator.isHexColor(colorHex)) {
+            return {
+                status: 400,
+                message: 'Invalid colorHex format.'
+            };
+        }
+
+        const tile = await Tile.create(
+            {
+                colorHex,
+                submissionTime: '2026-04-07 17:37:47.000'
+            }
+        );
+
+        if (tile.id) {
+            return {
+                status: 200,
+                message: `Tile ${colorHex} inserted successfully.`
+            };
+        }
+
+        return {
+            status: 500,
+            message: 'Tile insert failed.'
+        };
     }
 }

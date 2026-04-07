@@ -15,3 +15,17 @@ export function parseRGBComponent(input) {
 
     return null;
 }
+
+export function parseInteger(input) {
+    if (typeof input === 'number' && !isNaN(input)) {
+        return Math.floor(input);
+    }
+
+    const parsed = parseInt(input, 10);
+
+    if (typeof parsed === 'number' && !isNaN(parsed)) {
+        return Math.floor(parsed);
+    }
+
+    return undefined;
+}

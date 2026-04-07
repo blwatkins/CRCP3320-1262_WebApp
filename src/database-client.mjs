@@ -6,4 +6,8 @@ export class DatabaseClient {
     static queryMostRecentTiles(limit = 100) {
         throw new Error('Operation not supported: queryMostRecentTiles() must be implemented by subclass');
     }
+
+    static insertTile(colorHex) {
+        throw new Error('Operation not supported: insertTile() must be implemented by subclass');
+    }
 }

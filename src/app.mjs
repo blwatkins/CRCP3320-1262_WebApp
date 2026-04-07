@@ -1,13 +1,15 @@
 import express from 'express';
 
 import { ColorGenerator } from './color-generator.mjs';
-import { parseRGBComponent } from './utils.mjs';
 import { SequelizeClient } from './sequelize-client.mjs';
+import { StringValidator } from './string-validator.mjs';
+import { parseRGBComponent, parseInteger } from './utils.mjs';
 
 const app = express();
 const port = 3000;
 
 app.use(express.static('public'));
+app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
@@ -22,9 +24,15 @@ app.get('/random-color', (request, response) => {
     response.render('random-color', { title: 'Random Color' });
 });
 
+app.get('/new-tile', (request, response) => {
+    response.render('tile-form', { title: 'New Tile' });
+});
+
 app.get('/most-recent-tiles', async (request, response) => {
+    const limit = parseInteger(request.query.limit) ?? 100;
+
     try {
-        const tiles = await db.queryMostRecentTiles();
+        const tiles = await db.queryMostRecentTiles(limit);
         response.render('tiles', { title: 'Most Recent Tiles', hexColors: tiles });
     } catch (error) {
         console.error(error);
@@ -83,6 +91,27 @@ app.get('/api/random-color', async (request, response) => {
         } catch (error) {
             response.status(500).json({ error: 'Internal Server Error.' });
         }
+    }
+});
+
+app.post('/api/tile', async (request, response) => {
+    const requestColorHex = request.body.colorHex;
+
+    if (!StringValidator.isHexColor(requestColorHex)) {
+        return response.status(400).send('Bad Request: Invalid colorHex string.');
+    }
+
+    try {
+        const result = await db.insertTile(requestColorHex);
+
+        if (result.status === 200) {
+            return response.json({ message: result.message });
+        } else if (result.status === 400 || result.status === 500) {
+            return response.status(result.status).json({ error: result.message });
+        }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).send({ error: 'Internal Server Error.' });
     }
 });
 
