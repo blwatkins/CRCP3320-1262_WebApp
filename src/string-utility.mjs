@@ -1,4 +1,4 @@
-export class StringValidator {
+export class StringUtility {
     /**
      * @type {RegExp}
      */
@@ -13,6 +13,6 @@ export class StringValidator {
             return false;
         }
 
-        return StringValidator.hexColorExpression.test(input);
+        return StringUtility.hexColorExpression.test(input);
     }
 }

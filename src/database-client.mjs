@@ -1,3 +1,5 @@
+import { StringUtility } from './string-utility.mjs';
+
 export class DatabaseClient {
     static init() {
         throw new Error('Operation not supported: init() must be implemented by subclass');
@@ -7,7 +9,15 @@ export class DatabaseClient {
         throw new Error('Operation not supported: queryMostRecentTiles() must be implemented by subclass');
     }
 
+    static queryTilesByDate(date) {
+        throw new Error('Operation not supported: queryTilesByDate() must be implemented by subclass');
+    }
+
     static insertTile(colorHex) {
         throw new Error('Operation not supported: insertTile() must be implemented by subclass');
+    }
+
+    static filterTiles(tiles) {
+        return tiles.filter(tile => StringUtility.isHexColor(tile));
     }
 }
