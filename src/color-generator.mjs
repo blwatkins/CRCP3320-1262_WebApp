@@ -1,5 +1,5 @@
 import { StringUtility } from './string-utility.mjs';
-import {NumberUtility} from "./number-utility.mjs";
+import { NumberUtility } from './number-utility.mjs';
 
 export class ColorGenerator {
     static getHexColor({ minR, maxR, minG, maxG, minB, maxB }) {
