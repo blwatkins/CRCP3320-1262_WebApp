@@ -15,15 +15,17 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-const dbClientType = 'mysql'; // process.env.DATABASE_TYPE;
-let dbClient;
+const supportedDbClients = {
+    mysql: MySQLClient,
+    sequelize: SequelizeClient
+};
+const dbClientType = (process.env.DATABASE_TYPE ?? 'mysql').trim().toLowerCase();
 
-if (dbClientType === 'mysql') {
-    dbClient = MySQLClient;
-} else {
-    dbClient = SequelizeClient;
+if (!(dbClientType in supportedDbClients)) {
+    throw new Error(`Unsupported DATABASE_TYPE: ${dbClientType}. Supported values are: ${Object.keys(supportedDbClients).join(', ')}`);
 }
 
+const dbClient = supportedDbClients[dbClientType];
 const db = dbClient;
 await db.init();
 
