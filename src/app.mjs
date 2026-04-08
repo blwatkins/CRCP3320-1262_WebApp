@@ -1,8 +1,10 @@
 import express from 'express';
 
 import { ColorGenerator } from './color-generator.mjs';
+import { DateUtility } from './date-utility.js';
+import { MySQLClient } from './mysql-client.mjs';
 import { SequelizeClient } from './sequelize-client.mjs';
-import { StringValidator } from './string-validator.mjs';
+import { StringUtility } from './string-utility.mjs';
 import { parseRGBComponent, parseInteger } from './utils.mjs';
 
 const app = express();
@@ -13,7 +15,16 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-const db = SequelizeClient;
+const dbClientType = 'mysql'; //process.env.DATABASE_TYPE;
+let dbClient;
+
+if (dbClientType === 'mysql') {
+    dbClient = MySQLClient;
+} else {
+    dbClient = SequelizeClient;
+}
+
+const db = dbClient;
 await db.init();
 
 app.get('/', (request, response) => {
@@ -40,31 +51,29 @@ app.get('/most-recent-tiles', async (request, response) => {
     }
 });
 
-app.get('/tiles', (request, response) => {
-    response.render('tiles', { title: "Today's Tiles", hexColors: ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#000000', '#FFFFFF', '#0000FF'] });
+app.get('/tiles', async (request, response) => {
+    try {
+        const tiles = await db.queryTilesByDate(DateUtility.getCurrentDate());
+        response.render('tiles', { title: "Today's Tiles", hexColors: tiles });
+    } catch (error) {
+        console.error(error);
+        response.status(500).send('Internal Server Error');
+    }
 });
 
-app.get('/tiles/:date', (request, response) => {
-    const dateExpression = /^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-([0-9]{4})$/;
+app.get('/tiles/:date', async (request, response) => {
     const requestDate = request.params.date;
-    const dateMatch = requestDate.match(dateExpression);
 
-    if (dateMatch) {
-        const month = Number.parseInt(dateMatch[1], 10);
-        const day = Number.parseInt(dateMatch[2], 10);
-        const year = Number.parseInt(dateMatch[3], 10);
-        const parsedDate = new Date(year, month - 1, day);
-        const isValidCalendarDate = parsedDate.getFullYear() === year
-            && parsedDate.getMonth() === month - 1
-            && parsedDate.getDate() === day;
+    if (!DateUtility.isValidDate(requestDate)) {
+        response.status(400).send('Bad Request: Invalid date. Accepted date format: YYYY-MM-DD.');
+    }
 
-        if (isValidCalendarDate) {
-            response.send('Tile Date');
-        } else {
-            response.status(400).send('Bad Request: Invalid Date');
-        }
-    } else {
-        response.status(400).send('Bad Request: Invalid Date');
+    try {
+        const tiles = await db.queryTilesByDate(requestDate);
+        response.render('tiles', { title: 'Tiles by Day', hexColors: tiles });
+    } catch (error) {
+        console.error(error);
+        response.status(500).send('Internal Server Error');
     }
 });
 
@@ -97,7 +106,7 @@ app.get('/api/random-color', async (request, response) => {
 app.post('/api/tile', async (request, response) => {
     const requestColorHex = request.body.colorHex;
 
-    if (!StringValidator.isHexColor(requestColorHex)) {
+    if (!StringUtility.isHexColor(requestColorHex)) {
         return response.status(400).send('Bad Request: Invalid colorHex string.');
     }
 

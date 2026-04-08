@@ -1,7 +1,7 @@
 import { DataTypes, Sequelize, Model } from 'sequelize';
 
 import { DatabaseClient } from './database-client.mjs';
-import { StringValidator } from './string-validator.mjs';
+import { StringUtility } from './string-utility.mjs';
 
 const sequelize = new Sequelize({
     dialect: 'mysql',
@@ -69,7 +69,7 @@ export class SequelizeClient extends DatabaseClient {
      * @returns {Promise<{status: 200|400|500, message: string}>}
      */
     static async insertTile(colorHex) {
-        if (!StringValidator.isHexColor(colorHex)) {
+        if (!StringUtility.isHexColor(colorHex)) {
             return {
                 status: 400,
                 message: 'Invalid colorHex format.'

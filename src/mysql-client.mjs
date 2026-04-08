@@ -1,6 +1,9 @@
 import mysql from 'mysql2/promise';
 
 import { DatabaseClient } from './database-client.mjs';
+import { DateUtility } from './date-utility.js';
+import { StringUtility } from "./string-utility.mjs";
+import { getCurrentTimestamp } from './utils.mjs';
 
 const connectionPool = await mysql.createPool({
     host: process.env.MYSQL_HOST,
@@ -23,13 +26,56 @@ export class MySQLClient extends DatabaseClient {
         }
     }
 
-    // TODO - utilize limit in prepared statement
     static async queryMostRecentTiles(limit = 100) {
         if (connectionPool) {
-            const [rows] = await connectionPool.execute('SELECT * FROM tiles ORDER BY submissionTime DESC LIMIT 100');
+            const [rows] = await connectionPool.query(
+                'SELECT * FROM tiles ORDER BY submissionTime DESC LIMIT ?',
+                [limit]
+            );
             return rows.map(row => row.colorHex);
         }
 
         return [];
+    }
+
+    static async queryTilesByDate(date) {
+        if (connectionPool && DateUtility.isValidDate(date)) {
+            const [rows] = await connectionPool.execute(
+                'SELECT colorHex FROM tiles WHERE DATE(submissionTime) = ? ORDER BY submissionTime DESC',
+                [date]
+            );
+
+            return rows.map(row => row.colorHex);
+        }
+
+        return [];
+    }
+
+    static async insertTile(colorHex) {
+        if (!StringUtility.isHexColor(colorHex)) {
+            return {
+                status: 400,
+                message: 'Invalid colorHex format.'
+            };
+        }
+
+        if (connectionPool) {
+            const [result] = await connectionPool.execute(
+                'INSERT INTO tiles(colorHex, submissionTime) VALUES (?, ?)',
+                [colorHex, getCurrentTimestamp()]
+            );
+
+            if (result.affectedRows > 0) {
+                return {
+                    status: 200,
+                    message: `Tile ${colorHex} inserted successfully.`
+                };
+            }
+        }
+
+        return {
+            status: 500,
+            message: 'Tile insert failed.'
+        };
     }
 }
