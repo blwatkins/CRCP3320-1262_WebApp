@@ -60,12 +60,10 @@ export class ColorGenerator {
      * @returns {boolean}
      */
     static isValidColorComponent(input, acceptUndefined = false) {
-        const isNumberInRange = NumberUtility.isNumber(input) || NumberUtility.isInRange(input, 0, 255);
-
-        if (acceptUndefined) {
-            return isNumberInRange || input === undefined;
+        if (acceptUndefined && input === undefined) {
+            return true;
         }
 
-        return isNumberInRange;
+        return NumberUtility.isNumber(input) && NumberUtility.isInRange(input, 0, 255);
     }
 }

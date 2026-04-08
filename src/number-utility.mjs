@@ -37,10 +37,10 @@ export class NumberUtility {
             return input;
         }
 
-        const parsed = NumberUtility.parseNumber(input);
+        const parsed = Number.parseInt(input, 10);
 
         if (NumberUtility.isNumber(parsed)) {
-            return Math.floor(parsed);
+            return parsed;
         }
 
         return undefined;
