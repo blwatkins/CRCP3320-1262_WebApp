@@ -25,7 +25,7 @@ export class MySQLClient extends DatabaseClient {
         try {
             await connectionPool.execute('SELECT 1 + 1');
         } catch (error) {
-            throw new Error('Unable to establish MySQL connection.');
+            throw new Error('Unable to establish MySQL connection.', { cause: error });
         }
     }
 
@@ -57,14 +57,14 @@ export class MySQLClient extends DatabaseClient {
                 return {
                     status: 500,
                     message: 'Error querying tiles by date.'
-                }
+                };
             }
         }
 
         return {
             status: 500,
             message: 'Error querying tiles by date.'
-        }
+        };
     }
 
     /**
@@ -95,14 +95,14 @@ export class MySQLClient extends DatabaseClient {
                 return {
                     status: 500,
                     message: 'Error querying tiles by date.'
-                }
+                };
             }
         }
 
         return {
             status: 500,
             message: 'Error querying tiles by date.'
-        }
+        };
     }
 
     /**

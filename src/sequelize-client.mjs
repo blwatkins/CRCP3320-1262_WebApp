@@ -76,7 +76,7 @@ export class SequelizeClient extends DatabaseClient {
             return {
                 status: 500,
                 message: 'Error querying tiles by date.'
-            }
+            };
         }
     }
 
@@ -108,7 +108,7 @@ export class SequelizeClient extends DatabaseClient {
             return {
                 status: 500,
                 message: 'Error querying tiles by date.'
-            }
+            };
         }
     }
 
