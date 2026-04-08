@@ -5,7 +5,6 @@ export class NumberUtility {
      */
     static isNumber(input) {
         return typeof input === 'number'
-            && !isNaN(input)
             && Number.isFinite(input);
     }
 
