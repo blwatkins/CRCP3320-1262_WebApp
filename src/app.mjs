@@ -19,14 +19,14 @@ const supportedDbClients = {
     mysql: MySQLClient,
     sequelize: SequelizeClient
 };
+
 const dbClientType = (process.env.DATABASE_TYPE ?? 'mysql').trim().toLowerCase();
 
 if (!(dbClientType in supportedDbClients)) {
     throw new Error(`Unsupported DATABASE_TYPE: ${dbClientType}. Supported values are: ${Object.keys(supportedDbClients).join(', ')}`);
 }
 
-const dbClient = supportedDbClients[dbClientType];
-const db = dbClient;
+const db = supportedDbClients[dbClientType];
 await db.init();
 
 app.get('/', (request, response) => {
@@ -43,23 +43,22 @@ app.get('/new-tile', (request, response) => {
 
 app.get('/most-recent-tiles', async (request, response) => {
     const limit = parseInteger(request.query.limit) ?? 100;
+    const result = await db.queryMostRecentTiles(limit);
 
-    try {
-        const tiles = await db.queryMostRecentTiles(limit);
-        response.render('tiles', { title: 'Most Recent Tiles', hexColors: tiles });
-    } catch (error) {
-        console.error(error);
-        response.status(500).send('Internal Server Error');
+    if (result.status === 200) {
+        return response.render('tiles', { title: 'Most Recent Tiles', hexColors: result.data });
+    } else if (result.status === 400 || result.status === 500) {
+        return response.status(result.status).send(result.message);
     }
 });
 
 app.get('/tiles', async (request, response) => {
-    try {
-        const tiles = await db.queryTilesByDate(DateUtility.getCurrentDate());
-        response.render('tiles', { title: "Today's Tiles", hexColors: tiles });
-    } catch (error) {
-        console.error(error);
-        response.status(500).send('Internal Server Error');
+    const result = await db.queryTilesByDate(DateUtility.getCurrentDate());
+
+    if (result.status === 200) {
+        return response.render('tiles', { title: "Today's Tiles", hexColors: result.data });
+    } else if (result.status === 400 || result.status === 500) {
+        return response.status(result.status).send(result.message);
     }
 });
 
@@ -70,12 +69,12 @@ app.get('/tiles/:date', async (request, response) => {
         return response.status(400).send('Bad Request: Invalid date. Accepted date format: YYYY-MM-DD.');
     }
 
-    try {
-        const tiles = await db.queryTilesByDate(requestDate);
-        return response.render('tiles', { title: 'Tiles by Day', hexColors: tiles });
-    } catch (error) {
-        console.error(error);
-        return response.status(500).send('Internal Server Error');
+    const result = await db.queryTilesByDate(requestDate);
+
+    if (result.status === 200) {
+        return response.render('tiles', { title: 'Tiles by Day', hexColors: result.data });
+    } else if (result.status === 400 || result.status === 500) {
+        return response.status(result.status).send(result.message);
     }
 });
 
@@ -112,17 +111,12 @@ app.post('/api/tile', async (request, response) => {
         return response.status(400).send('Bad Request: Invalid colorHex string.');
     }
 
-    try {
-        const result = await db.insertTile(requestColorHex);
+    const result = await db.insertTile(requestColorHex);
 
-        if (result.status === 200) {
-            return response.json({ message: result.message });
-        } else if (result.status === 400 || result.status === 500) {
-            return response.status(result.status).json({ error: result.message });
-        }
-    } catch (error) {
-        console.error(error);
-        return response.status(500).send({ error: 'Internal Server Error.' });
+    if (result.status === 200) {
+        return response.json({ message: result.message });
+    } else if (result.status === 400 || result.status === 500) {
+        return response.status(result.status).json({ error: result.message });
     }
 });
 

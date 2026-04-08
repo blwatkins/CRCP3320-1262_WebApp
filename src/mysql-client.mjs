@@ -13,6 +13,10 @@ const connectionPool = await mysql.createPool({
 });
 
 export class MySQLClient extends DatabaseClient {
+    /**
+     * @returns {Promise<void>}
+     * @throws {Error} If mysql2 authentication fails.
+     */
     static async init() {
         if (!connectionPool) {
             throw new Error('Missing connection pool.');
@@ -25,35 +29,86 @@ export class MySQLClient extends DatabaseClient {
         }
     }
 
+    /**
+     * @param limit {number}
+     * @returns {Promise<{ status: 200, data: string[] }|{ status: 400|500, message: string }>}
+     */
     static async queryMostRecentTiles(limit = 100) {
         if (typeof limit !== 'number' || limit < 1 || limit > 1_000) {
-            throw new Error(`Invalid limit: ${limit}. Limit must be a number between 1 and 1000.`);
+            return {
+                status: 400,
+                message: `Invalid limit: ${limit}. Limit must be a number between 1 and 1000.`
+            };
         }
 
         if (connectionPool) {
-            const [rows] = await connectionPool.query(
-                'SELECT colorHex FROM tiles ORDER BY submissionTime DESC LIMIT ?',
-                [limit]
-            );
-            return MySQLClient.filterTiles(rows.map(row => row.colorHex));
+            try {
+                const [rows] = await connectionPool.query(
+                    'SELECT colorHex FROM tiles ORDER BY submissionTime DESC LIMIT ?',
+                    [limit]
+                );
+
+                return {
+                    status: 200,
+                    data: MySQLClient.filterTiles(rows.map(row => row.colorHex))
+                };
+            } catch (error) {
+                console.error(error);
+                return {
+                    status: 500,
+                    message: 'Error querying most recent tiles.'
+                };
+            }
         }
 
-        return [];
+        return {
+            status: 500,
+            message: 'Error querying most recent tiles.'
+        };
     }
 
+    /**
+     * @param date {string}
+     * @returns {Promise<{ status: 200, data: string[] }|{ status: 400|500, message: string }>}
+     */
     static async queryTilesByDate(date) {
-        if (connectionPool && DateUtility.isValidDate(date)) {
-            const [rows] = await connectionPool.execute(
-                'SELECT colorHex FROM tiles WHERE DATE(submissionTime) = ? ORDER BY submissionTime DESC',
-                [date]
-            );
-
-            return MySQLClient.filterTiles(rows.map(row => row.colorHex));
+        if (!DateUtility.isValidDate(date)) {
+            return {
+                status: 400,
+                message: 'Invalid date format.'
+            };
         }
 
-        return [];
+        if (connectionPool) {
+            try {
+                const [rows] = await connectionPool.execute(
+                    'SELECT colorHex FROM tiles WHERE DATE(submissionTime) = ? ORDER BY submissionTime',
+                    [date]
+                );
+
+                return {
+                    status: 200,
+                    data: MySQLClient.filterTiles(rows.map(row => row.colorHex))
+                };
+            } catch (error) {
+                console.error(error);
+                return {
+                    status: 500,
+                    message: 'Error querying tiles by date.'
+                };
+            }
+        }
+
+        return {
+            status: 500,
+            message: 'Error querying tiles by date.'
+        };
     }
 
+    /**
+     * @param colorHex {string}
+     * @returns {Promise<{ status: 200|400|500, message: string }>}
+     */
     static async insertTile(colorHex) {
         if (!StringUtility.isHexColor(colorHex)) {
             return {
@@ -63,15 +118,23 @@ export class MySQLClient extends DatabaseClient {
         }
 
         if (connectionPool) {
-            const [result] = await connectionPool.execute(
-                'INSERT INTO tiles(colorHex, submissionTime) VALUES (?, ?)',
-                [colorHex, DateUtility.getCurrentTimestamp()]
-            );
+            try {
+                const [result] = await connectionPool.execute(
+                    'INSERT INTO tiles(colorHex, submissionTime) VALUES (?, ?)',
+                    [colorHex, DateUtility.getCurrentTimestamp()]
+                );
 
-            if (result.affectedRows > 0) {
+                if (result.affectedRows > 0) {
+                    return {
+                        status: 200,
+                        message: `Tile ${colorHex} inserted successfully.`
+                    };
+                }
+            } catch (error) {
+                console.error(error);
                 return {
-                    status: 200,
-                    message: `Tile ${colorHex} inserted successfully.`
+                    status: 500,
+                    message: 'Tile insert failed.'
                 };
             }
         }
