@@ -1,3 +1,5 @@
+import {StringUtility} from "./string-utility.mjs";
+
 export class DatabaseClient {
     static init() {
         throw new Error('Operation not supported: init() must be implemented by subclass');
@@ -13,5 +15,9 @@ export class DatabaseClient {
 
     static insertTile(colorHex) {
         throw new Error('Operation not supported: insertTile() must be implemented by subclass');
+    }
+
+    static filterTiles(tiles) {
+        return tiles.filter((tile) => {StringUtility.isHexColor(tile)});
     }
 }

@@ -2,7 +2,7 @@ import mysql from 'mysql2/promise';
 
 import { DatabaseClient } from './database-client.mjs';
 import { DateUtility } from './date-utility.js';
-import { StringUtility } from "./string-utility.mjs";
+import { StringUtility } from './string-utility.mjs';
 import { getCurrentTimestamp } from './utils.mjs';
 
 const connectionPool = await mysql.createPool({
@@ -32,7 +32,7 @@ export class MySQLClient extends DatabaseClient {
                 'SELECT * FROM tiles ORDER BY submissionTime DESC LIMIT ?',
                 [limit]
             );
-            return rows.map(row => row.colorHex);
+            return MySQLClient.filterTiles(rows.map(row => row.colorHex));
         }
 
         return [];
@@ -45,7 +45,7 @@ export class MySQLClient extends DatabaseClient {
                 [date]
             );
 
-            return rows.map(row => row.colorHex);
+            return MySQLClient.filterTiles(rows.map(row => row.colorHex));
         }
 
         return [];

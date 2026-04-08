@@ -61,7 +61,7 @@ export class SequelizeClient extends DatabaseClient {
             limit
         });
 
-        return tiles.map(tile => tile.colorHex);
+        return SequelizeClient.filterTiles(tiles.map(tile => tile.colorHex));
     }
 
     /**
