@@ -1,3 +1,5 @@
+import { StringUtility } from './string-utility.mjs';
+
 export class ColorGenerator {
     static getHexColor({ minR, maxR, minG, maxG, minB, maxB }) {
         if (minR === undefined) minR = 0;
@@ -22,8 +24,7 @@ export class ColorGenerator {
     }
 
     static async getColorData(colorHex) {
-        if (colorHex && typeof colorHex === 'string') {
-            // TODO - add a check for proper hexColor format #RRGGBB using regular expression
+        if (colorHex && typeof colorHex === 'string' && StringUtility.hexColorExpression.test(colorHex)) {
             const URL = 'https://api.color.pizza/v1/';
             const queryData = { values: colorHex.replace('#', '') };
             const params = new URLSearchParams(queryData);
