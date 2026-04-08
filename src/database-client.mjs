@@ -1,4 +1,4 @@
-import {StringUtility} from "./string-utility.mjs";
+import { StringUtility } from './string-utility.mjs';
 
 export class DatabaseClient {
     static init() {
@@ -18,6 +18,6 @@ export class DatabaseClient {
     }
 
     static filterTiles(tiles) {
-        return tiles.filter((tile) => {StringUtility.isHexColor(tile)});
+        return tiles.filter(tile => StringUtility.isHexColor(tile));
     }
 }

@@ -15,7 +15,7 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-const dbClientType = 'mysql'; //process.env.DATABASE_TYPE;
+const dbClientType = 'mysql'; // process.env.DATABASE_TYPE;
 let dbClient;
 
 if (dbClientType === 'mysql') {
