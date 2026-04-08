@@ -87,12 +87,12 @@ app.get('/api/random-color', async (request, response) => {
     const maxB = NumberUtility.parseInteger(request.query.maxB);
 
     if (
-        !ColorGenerator.isValidColorComponent(minR, true)
-        || !ColorGenerator.isValidColorComponent(maxR, true)
-        || !ColorGenerator.isValidColorComponent(minG, true)
-        || !ColorGenerator.isValidColorComponent(maxG, true)
-        || !ColorGenerator.isValidColorComponent(minB, true)
-        || !ColorGenerator.isValidColorComponent(maxB, true)
+        (request.query.minR && !ColorGenerator.isValidColorComponent(minR))
+        || (request.query.maxR && !ColorGenerator.isValidColorComponent(maxR))
+        || (request.query.minG && !ColorGenerator.isValidColorComponent(minG))
+        || (request.query.maxG && !ColorGenerator.isValidColorComponent(maxG))
+        || (request.query.minB && !ColorGenerator.isValidColorComponent(minB))
+        || (request.query.maxB && !ColorGenerator.isValidColorComponent(maxB))
     ) {
         return response.status(400).json({ error: 'Invalid query parameters. Parameters must be integers between 0 and 255.' });
     }
