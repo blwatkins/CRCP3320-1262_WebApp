@@ -1,11 +1,12 @@
-import { DataTypes, Sequelize, Model } from 'sequelize';
+import { DataTypes, Sequelize, Model, Op } from 'sequelize';
 
 import { DatabaseClient } from './database-client.mjs';
+import { DateUtility } from './date-utility.mjs';
 import { StringUtility } from './string-utility.mjs';
 
 const sequelize = new Sequelize({
     dialect: 'mysql',
-    logging: false,
+    logging: console.debug,
     host: process.env.MYSQL_HOST,
     port: Number.parseInt(process.env.MYSQL_PORT, 10),
     username: process.env.MYSQL_USERNAME,
@@ -31,7 +32,7 @@ Tile.init(
             type: DataTypes.STRING(9),
             allowNull: false,
             validate: {
-                is: /^(#[0-9a-f-A-F]{6}|#[0-9a-f-A-F]{8})$/
+                is: StringUtility.hexColorExpression
             }
         }
     },
@@ -41,6 +42,7 @@ Tile.init(
 export class SequelizeClient extends DatabaseClient {
     /**
      * @returns {Promise<void>}
+     * @throws {Error} If sequelize authentication fails.
      */
     static async init() {
         await sequelize.authenticate();
@@ -48,25 +50,71 @@ export class SequelizeClient extends DatabaseClient {
 
     /**
      * @param limit {number}
-     * @returns {Promise<string[]>}
-     * @throws {Error} if the limit is not a valid number between 1 and 1000.
+     * @returns {Promise<{ status: 200, data: string[] }|{ status: 400|500, message: string }>}
      */
     static async queryMostRecentTiles(limit = 100) {
         if (typeof limit !== 'number' || limit < 1 || limit > 1_000) {
-            throw new Error(`Invalid limit: ${limit}. Limit must be a number between 1 and 1000.`);
+            return {
+                status: 400,
+                message: `Invalid limit: ${limit}. Limit must be a number between 1 and 1000.`
+            };
         }
 
-        const tiles = await Tile.findAll({
-            order: [['submissionTime', 'DESC']],
-            limit
-        });
+        try {
+            const tiles = await Tile.findAll({
+                attributes: ['colorHex'],
+                order: [['submissionTime', 'DESC']],
+                limit
+            });
 
-        return SequelizeClient.filterTiles(tiles.map(tile => tile.colorHex));
+            return {
+                status: 200,
+                data: SequelizeClient.filterTiles(tiles.map(tile => tile.colorHex))
+            };
+        } catch (error) {
+            console.error(error);
+            return {
+                status: 500,
+                message: 'Error querying tiles by date.'
+            }
+        }
+    }
+
+    /**
+     * @param date {string}
+     * @returns {Promise<{ status: 200, data: string[] }|{ status: 400|500, message: string }>}
+     */
+    static async queryTilesByDate(date) {
+        if (!DateUtility.isValidDate(date)) {
+            return {
+                status: 400,
+                message: 'Invalid date format.'
+            };
+        }
+
+        try {
+            const tiles = await Tile.findAll({
+                attributes: ['colorHex'],
+                where: sequelize.where(sequelize.fn('DATE', sequelize.col('submissionTime')), Op.eq, date),
+                order: ['submissionTime']
+            });
+
+            return {
+                status: 200,
+                data: SequelizeClient.filterTiles(tiles.map(tile => tile.colorHex))
+            };
+        } catch (error) {
+            console.error(error);
+            return {
+                status: 500,
+                message: 'Error querying tiles by date.'
+            }
+        }
     }
 
     /**
      * @param colorHex {string}
-     * @returns {Promise<{status: 200|400|500, message: string}>}
+     * @returns {Promise<{ status: 200|400|500, message: string }>}
      */
     static async insertTile(colorHex) {
         if (!StringUtility.isHexColor(colorHex)) {
@@ -76,16 +124,24 @@ export class SequelizeClient extends DatabaseClient {
             };
         }
 
-        const tile = await Tile.create(
-            {
-                colorHex
-            }
-        );
+        try {
+            const tile = await Tile.create(
+                {
+                    colorHex
+                }
+            );
 
-        if (tile.id) {
+            if (tile.id) {
+                return {
+                    status: 200,
+                    message: `Tile ${colorHex} inserted successfully.`
+                };
+            }
+        } catch (error) {
+            console.error(error);
             return {
-                status: 200,
-                message: `Tile ${colorHex} inserted successfully.`
+                status: 500,
+                message: 'Tile insert failed.'
             };
         }
 
