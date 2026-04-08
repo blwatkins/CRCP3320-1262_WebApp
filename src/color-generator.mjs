@@ -24,7 +24,7 @@ export class ColorGenerator {
     }
 
     static async getColorData(colorHex) {
-        if (colorHex && typeof colorHex === 'string' && StringUtility.hexColorExpression.test(colorHex)) {
+        if (StringUtility.isHexColor(colorHex)) {
             const URL = 'https://api.color.pizza/v1/';
             const queryData = { values: colorHex.replace('#', '') };
             const params = new URLSearchParams(queryData);
