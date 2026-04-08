@@ -1,4 +1,5 @@
 import { StringUtility } from './string-utility.mjs';
+import {NumberUtility} from "./number-utility.mjs";
 
 export class ColorGenerator {
     static getHexColor({ minR, maxR, minG, maxG, minB, maxB }) {
@@ -51,5 +52,20 @@ export class ColorGenerator {
         }
 
         return undefined;
+    }
+
+    /**
+     * @param input {*}
+     * @param acceptUndefined {boolean}
+     * @returns {boolean}
+     */
+    static isValidColorComponent(input, acceptUndefined = false) {
+        const isNumberInRange = NumberUtility.isNumber(input) || NumberUtility.isInRange(input, 0, 255);
+
+        if (acceptUndefined) {
+            return isNumberInRange || input === undefined;
+        }
+
+        return isNumberInRange;
     }
 }

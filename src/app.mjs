@@ -86,20 +86,13 @@ app.get('/api/random-color', async (request, response) => {
     const minB = NumberUtility.parseInteger(request.query.minB);
     const maxB = NumberUtility.parseInteger(request.query.maxB);
 
-    const hasMinR = request.query.minR !== undefined;
-    const hasMaxR = request.query.maxR !== undefined;
-    const hasMinG = request.query.minG !== undefined;
-    const hasMaxG = request.query.maxG !== undefined;
-    const hasMinB = request.query.minB !== undefined;
-    const hasMaxB = request.query.maxB !== undefined;
-
     if (
-        (hasMinR && (!NumberUtility.isNumber(minR) || !NumberUtility.isInRange(minR, 0, 255)))
-        || (hasMaxR && (!NumberUtility.isNumber(maxR) || !NumberUtility.isInRange(maxR, 0, 255)))
-        || (hasMinG && (!NumberUtility.isNumber(minG) || !NumberUtility.isInRange(minG, 0, 255)))
-        || (hasMaxG && (!NumberUtility.isNumber(maxG) || !NumberUtility.isInRange(maxG, 0, 255)))
-        || (hasMinB && (!NumberUtility.isNumber(minB) || !NumberUtility.isInRange(minB, 0, 255)))
-        || (hasMaxB && (!NumberUtility.isNumber(maxB) || !NumberUtility.isInRange(maxB, 0, 255)))
+        !ColorGenerator.isValidColorComponent(minR, true)
+        || !ColorGenerator.isValidColorComponent(maxR, true)
+        || !ColorGenerator.isValidColorComponent(minG, true)
+        || !ColorGenerator.isValidColorComponent(maxG, true)
+        || !ColorGenerator.isValidColorComponent(minB, true)
+        || !ColorGenerator.isValidColorComponent(maxB, true)
     ) {
         return response.status(400).json({ error: 'Invalid query parameters. Parameters must be integers between 0 and 255.' });
     }
