@@ -5,7 +5,7 @@ import { DateUtility } from './date-utility.mjs';
 import { MySQLClient } from './mysql-client.mjs';
 import { SequelizeClient } from './sequelize-client.mjs';
 import { StringUtility } from './string-utility.mjs';
-import { parseRGBComponent, parseInteger } from './utils.mjs';
+import { NumberUtility } from './number-utility.mjs';
 
 const app = express();
 const port = 3000;
@@ -42,7 +42,7 @@ app.get('/new-tile', (request, response) => {
 });
 
 app.get('/most-recent-tiles', async (request, response) => {
-    const limit = parseInteger(request.query.limit) ?? 100;
+    const limit = NumberUtility.parseInteger(request.query.limit) ?? 100;
     const result = await db.queryMostRecentTiles(limit);
 
     if (result.status === 200) {
@@ -79,28 +79,42 @@ app.get('/tiles/:date', async (request, response) => {
 });
 
 app.get('/api/random-color', async (request, response) => {
-    const minR = parseRGBComponent(request.query.minR);
-    const maxR = parseRGBComponent(request.query.maxR);
-    const minG = parseRGBComponent(request.query.minG);
-    const maxG = parseRGBComponent(request.query.maxG);
-    const minB = parseRGBComponent(request.query.minB);
-    const maxB = parseRGBComponent(request.query.maxB);
+    const minR = NumberUtility.parseInteger(request.query.minR);
+    const maxR = NumberUtility.parseInteger(request.query.maxR);
+    const minG = NumberUtility.parseInteger(request.query.minG);
+    const maxG = NumberUtility.parseInteger(request.query.maxG);
+    const minB = NumberUtility.parseInteger(request.query.minB);
+    const maxB = NumberUtility.parseInteger(request.query.maxB);
 
-    if (minR === null || maxR === null || minG === null || maxG === null || minB === null || maxB === null) {
-        response.status(400).json({ error: 'Invalid query parameters. Parameters must be integers between 0 and 255.' });
-    } else {
-        try {
-            const colorHex = ColorGenerator.getHexColor({ minR, maxR, minG, maxG, minB, maxB });
-            const colorData = await ColorGenerator.getColorData(colorHex);
+    if (
+        (request.query.minR && !ColorGenerator.isValidColorComponent(minR))
+        || (request.query.maxR && !ColorGenerator.isValidColorComponent(maxR))
+        || (request.query.minG && !ColorGenerator.isValidColorComponent(minG))
+        || (request.query.maxG && !ColorGenerator.isValidColorComponent(maxG))
+        || (request.query.minB && !ColorGenerator.isValidColorComponent(minB))
+        || (request.query.maxB && !ColorGenerator.isValidColorComponent(maxB))
+    ) {
+        return response.status(400).json({ error: 'Invalid query parameters. Parameters must be integers between 0 and 255.' });
+    }
 
-            if (colorData) {
-                response.json(colorData);
-            } else {
-                response.status(400).json({ error: 'Bad Request.' });
-            }
-        } catch (error) {
-            response.status(500).json({ error: 'Internal Server Error.' });
+    let colorHex;
+
+    try {
+        colorHex = ColorGenerator.getHexColor({ minR, maxR, minG, maxG, minB, maxB });
+    } catch (error) {
+        return response.status(400).json({ error: 'Invalid query parameters. All minimum values must be less than their corresponding maximum values.' });
+    }
+
+    try {
+        const colorData = await ColorGenerator.getColorData(colorHex);
+
+        if (colorData) {
+            return response.json(colorData);
         }
+
+        return response.status(400).json({ error: 'Bad Request.' });
+    } catch (error) {
+        return response.status(500).json({ error: 'Internal Server Error.' });
     }
 });
 
