@@ -1,7 +1,7 @@
 import mysql from 'mysql2/promise';
 
 import { DatabaseClient } from './database-client.mjs';
-import { DateUtility } from './date-utility.js';
+import { DateUtility } from './date-utility.mjs';
 import { StringUtility } from './string-utility.mjs';
 import { getCurrentTimestamp } from './utils.mjs';
 
@@ -27,9 +27,13 @@ export class MySQLClient extends DatabaseClient {
     }
 
     static async queryMostRecentTiles(limit = 100) {
+        if (typeof limit !== 'number' || limit < 1 || limit > 1_000) {
+            throw new Error(`Invalid limit: ${limit}. Limit must be a number between 1 and 1000.`);
+        }
+
         if (connectionPool) {
             const [rows] = await connectionPool.query(
-                'SELECT * FROM tiles ORDER BY submissionTime DESC LIMIT ?',
+                'SELECT colorHex FROM tiles ORDER BY submissionTime DESC LIMIT ?',
                 [limit]
             );
             return MySQLClient.filterTiles(rows.map(row => row.colorHex));

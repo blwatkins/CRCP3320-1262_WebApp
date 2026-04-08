@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { ColorGenerator } from './color-generator.mjs';
-import { DateUtility } from './date-utility.js';
+import { DateUtility } from './date-utility.mjs';
 import { MySQLClient } from './mysql-client.mjs';
 import { SequelizeClient } from './sequelize-client.mjs';
 import { StringUtility } from './string-utility.mjs';
@@ -65,15 +65,15 @@ app.get('/tiles/:date', async (request, response) => {
     const requestDate = request.params.date;
 
     if (!DateUtility.isValidDate(requestDate)) {
-        response.status(400).send('Bad Request: Invalid date. Accepted date format: YYYY-MM-DD.');
+        return response.status(400).send('Bad Request: Invalid date. Accepted date format: YYYY-MM-DD.');
     }
 
     try {
         const tiles = await db.queryTilesByDate(requestDate);
-        response.render('tiles', { title: 'Tiles by Day', hexColors: tiles });
+        return response.render('tiles', { title: 'Tiles by Day', hexColors: tiles });
     } catch (error) {
         console.error(error);
-        response.status(500).send('Internal Server Error');
+        return response.status(500).send('Internal Server Error');
     }
 });
 
