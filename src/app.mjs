@@ -79,26 +79,33 @@ app.get('/tiles/:date', async (request, response) => {
 });
 
 app.get('/api/random-color', async (request, response) => {
-    const minR = NumberUtility.parseInteger(request.query.minR) ?? 0;
-    const maxR = NumberUtility.parseInteger(request.query.maxR) ?? 255;
-    const minG = NumberUtility.parseInteger(request.query.minG) ?? 0;
-    const maxG = NumberUtility.parseInteger(request.query.maxG) ?? 255;
-    const minB = NumberUtility.parseInteger(request.query.minB) ?? 0;
-    const maxB = NumberUtility.parseInteger(request.query.maxB) ?? 255;
+    const minR = NumberUtility.parseInteger(request.query.minR);
+    const maxR = NumberUtility.parseInteger(request.query.maxR);
+    const minG = NumberUtility.parseInteger(request.query.minG);
+    const maxG = NumberUtility.parseInteger(request.query.maxG);
+    const minB = NumberUtility.parseInteger(request.query.minB);
+    const maxB = NumberUtility.parseInteger(request.query.maxB);
 
     if (
-        !NumberUtility.isInRange(minR, 0, 255)
-        || !NumberUtility.isInRange(maxR, 0, 255)
-        || !NumberUtility.isInRange(minG, 0, 255)
-        || !NumberUtility.isInRange(maxG, 0, 255)
-        || !NumberUtility.isInRange(minB, 0, 255)
-        || !NumberUtility.isInRange(maxB, 0, 255)
+        (!NumberUtility.isNumber(minR) || !NumberUtility.isInRange(minR, 0, 255))
+        || (!NumberUtility.isNumber(maxR) || !NumberUtility.isInRange(maxR, 0, 255))
+        || (!NumberUtility.isNumber(minG) || !NumberUtility.isInRange(minG, 0, 255))
+        || (!NumberUtility.isNumber(maxG) || !NumberUtility.isInRange(maxG, 0, 255))
+        || (!NumberUtility.isNumber(minB) || !NumberUtility.isInRange(minB, 0, 255))
+        || (!NumberUtility.isNumber(maxB) || !NumberUtility.isInRange(maxB, 0, 255))
     ) {
-        response.status(400).json({ error: 'Invalid query parameters. Parameters must be integers between 0 and 255.' });
+        return response.status(400).json({ error: 'Invalid query parameters. Parameters must be integers between 0 and 255.' });
+    }
+
+    let colorHex;
+
+    try {
+        colorHex = ColorGenerator.getHexColor({ minR, maxR, minG, maxG, minB, maxB });
+    } catch (error) {
+        return response.status(400).json({ error: 'Invalid query parameters. All minimum values must be less than their corresponding maximum values.' });
     }
 
     try {
-        const colorHex = ColorGenerator.getHexColor({ minR, maxR, minG, maxG, minB, maxB });
         const colorData = await ColorGenerator.getColorData(colorHex);
 
         if (colorData) {

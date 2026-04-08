@@ -29,6 +29,10 @@ export class NumberUtility {
         return undefined;
     }
 
+    /**
+     * @param input {*}
+     * @returns {undefined|number}
+     */
     static parseInteger(input) {
         if (NumberUtility.isNumber(input) && Number.isInteger(input)) {
             return input;
