@@ -19,14 +19,14 @@ const supportedDbClients = {
     mysql: MySQLClient,
     sequelize: SequelizeClient
 };
+
 const dbClientType = (process.env.DATABASE_TYPE ?? 'mysql').trim().toLowerCase();
 
 if (!(dbClientType in supportedDbClients)) {
     throw new Error(`Unsupported DATABASE_TYPE: ${dbClientType}. Supported values are: ${Object.keys(supportedDbClients).join(', ')}`);
 }
 
-const dbClient = supportedDbClients[dbClientType];
-const db = dbClient;
+const db = supportedDbClients[dbClientType];
 await db.init();
 
 app.get('/', (request, response) => {
