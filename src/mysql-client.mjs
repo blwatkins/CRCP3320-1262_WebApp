@@ -3,7 +3,6 @@ import mysql from 'mysql2/promise';
 import { DatabaseClient } from './database-client.mjs';
 import { DateUtility } from './date-utility.mjs';
 import { StringUtility } from './string-utility.mjs';
-import { getCurrentTimestamp } from './utils.mjs';
 
 const connectionPool = await mysql.createPool({
     host: process.env.MYSQL_HOST,
@@ -66,7 +65,7 @@ export class MySQLClient extends DatabaseClient {
         if (connectionPool) {
             const [result] = await connectionPool.execute(
                 'INSERT INTO tiles(colorHex, submissionTime) VALUES (?, ?)',
-                [colorHex, getCurrentTimestamp()]
+                [colorHex, DateUtility.getCurrentTimestamp()]
             );
 
             if (result.affectedRows > 0) {
