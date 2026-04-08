@@ -55,8 +55,8 @@ export class ColorGenerator {
     }
 
     /**
-     * @param input {*}
-     * @param acceptUndefined {boolean}
+     * @param {*} input
+     * @param {boolean} acceptUndefined
      * @returns {boolean}
      */
     static isValidColorComponent(input, acceptUndefined = false) {

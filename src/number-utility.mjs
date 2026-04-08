@@ -1,6 +1,6 @@
 export class NumberUtility {
     /**
-     * @param input {*}
+     * @param {*} input
      * @returns {boolean}
      */
     static isNumber(input) {
@@ -9,7 +9,7 @@ export class NumberUtility {
     }
 
     /**
-     * @param input {*}
+     * @param {*} input
      * @returns {undefined|number}
      */
     static parseNumber(input) {
@@ -29,7 +29,7 @@ export class NumberUtility {
     }
 
     /**
-     * @param input {*}
+     * @param {*} input
      * @returns {undefined|number}
      */
     static parseInteger(input) {
@@ -47,10 +47,10 @@ export class NumberUtility {
     }
 
     /**
-     * @param input {number}
-     * @param value1 {number}
-     * @param value2 {number}
-     * @param inclusive {boolean}
+     * @param {number} input
+     * @param {number} value1
+     * @param {number} value2
+     * @param {boolean} inclusive
      * @returns {boolean}
      * @throws {Error} If typechecks fail for any of the function arguments.
      */
