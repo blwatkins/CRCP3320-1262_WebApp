@@ -56,7 +56,7 @@ export class NumberUtility {
      */
     static isInRange(input, value1, value2, inclusive = true) {
         if (!NumberUtility.isNumber(input) || !NumberUtility.isNumber(value1) || !NumberUtility.isNumber(value2) || typeof inclusive !== 'boolean') {
-            throw new Error('Invalid argument for function isInRange(number, number, number, boolean).');
+            throw new Error('Invalid argument for function isInRange(number, number, number[, boolean]).');
         }
 
         const min = Math.min(value1, value2);
