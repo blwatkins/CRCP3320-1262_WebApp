@@ -6,7 +6,7 @@ import { StringUtility } from './string-utility.mjs';
 
 const sequelize = new Sequelize({
     dialect: 'mysql',
-    logging: console.debug,
+    logging: false,
     host: process.env.MYSQL_HOST,
     port: Number.parseInt(process.env.MYSQL_PORT, 10),
     username: process.env.MYSQL_USERNAME,
@@ -75,7 +75,7 @@ export class SequelizeClient extends DatabaseClient {
             console.error(error);
             return {
                 status: 500,
-                message: 'Error querying tiles by date.'
+                message: 'Error querying most recent tiles.'
             };
         }
     }
@@ -96,7 +96,7 @@ export class SequelizeClient extends DatabaseClient {
             const tiles = await Tile.findAll({
                 attributes: ['colorHex'],
                 where: sequelize.where(sequelize.fn('DATE', sequelize.col('submissionTime')), Op.eq, date),
-                order: ['submissionTime']
+                order: [['submissionTime', 'ASC']]
             });
 
             return {

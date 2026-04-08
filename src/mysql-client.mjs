@@ -56,14 +56,14 @@ export class MySQLClient extends DatabaseClient {
                 console.error(error);
                 return {
                     status: 500,
-                    message: 'Error querying tiles by date.'
+                    message: 'Error querying most recent tiles.'
                 };
             }
         }
 
         return {
             status: 500,
-            message: 'Error querying tiles by date.'
+            message: 'Error querying most recent tiles.'
         };
     }
 
@@ -82,7 +82,7 @@ export class MySQLClient extends DatabaseClient {
         if (connectionPool) {
             try {
                 const [rows] = await connectionPool.execute(
-                    'SELECT colorHex FROM tiles WHERE DATE(submissionTime) = ? ORDER BY submissionTime DESC',
+                    'SELECT colorHex FROM tiles WHERE DATE(submissionTime) = ? ORDER BY submissionTime',
                     [date]
                 );
 
