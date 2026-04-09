@@ -4,11 +4,108 @@
 <body style="height: 100vh;">
 <%- include('include/header-nav') %>
 <div class="container my-3 d-flex justify-content-center align-items-center" style="min-height: 85vh;">
-    <form>
-        <input type="color" class="form-control"/>
-        <input type="submit" class="btn btn-primary" value="Submit"/>
-    </form>
+    <div class="card" style="width: 20rem;">
+        <div id="color-div" style="height: 20rem; background-color: #000000;">
+            &nbsp;
+        </div>
+    </div>
+    <div>
+        <div class="mb-3 mx-3">
+            <label class="form-label" for="colorHex">Hex Color Code:</label>
+            <input type="text" class="form-control" id="colorHex" name="colorHex" minlength="7" maxlength="9" placeholder="#FFFFFF" required oninput="updatePage()"/>
+        </div>
+        <div class="mb-3 mx-3">
+            <button type="button" class="btn btn-outline-primary" id="random-color" onclick="getRandomColor()">Random Color</button>
+        </div>
+        <div class="mb-3 mx-3">
+            <input type="submit" class="btn btn-outline-success" id="submit-button" value="Submit" onclick="addTile()" disabled/>
+        </div>
+    </div>
+    <div id="form-alert" class="alert" role="alert" hidden>
+        &nbsp;
+    </div>
 </div>
 <%- include('include/footer-nav') %>
+<script>
+    function updatePage() {
+        const colorDiv = document.getElementById("color-div");
+        const colorHexInput = document.getElementById("colorHex");
+        const submitButton = document.getElementById("submit-button");
+
+        if (colorDiv && colorHexInput && submitButton) {
+            const colorHexValue = colorHexInput.value;
+            const hexColorExpression = /(^#[0-9a-fA-F]{6}$)|(^#[0-9a-fA-F]{8}$)/;
+
+            if (hexColorExpression.test(colorHexValue)) {
+                colorDiv.style.backgroundColor = colorHexValue;
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        }
+    }
+</script>
+<script>
+    function addTile() {
+        const colorHexInput = document.getElementById("colorHex");
+        const formAlertDiv = document.getElementById("form-alert");
+        const submitButton = document.getElementById("submit-button");
+
+        if (colorHexInput && formAlertDiv && submitButton) {
+            submitButton.disabled = true;
+            const colorHexValue = colorHexInput.value;
+            const hexColorExpression = /^(#[0-9a-fA-F]{6})|(#[0-9a-fA-F]{8})$/;
+
+            if (hexColorExpression.test(colorHexValue)) {
+                fetch('/api/tile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ colorHex: colorHexValue })
+                }).then((result) => {
+                    if (result && result.ok) {
+                        formAlertDiv.className = 'alert alert-success';
+                        formAlertDiv.textContent = 'Tile added successfully!';
+                        formAlertDiv.hidden = false;
+                    } else {
+                        formAlertDiv.className = 'alert alert-danger';
+                        formAlertDiv.textContent = 'Operation failed.';
+                        formAlertDiv.hidden = false;
+                    }
+                }).then(() => {
+                    return new Promise((resolve) => {
+                        setTimeout(resolve, 5_000);
+                    });
+                }).then(() => {
+                    formAlertDiv.hidden = true;
+                    formAlertDiv.classList.remove('alert-success');
+                    formAlertDiv.classList.remove('alert-danger');
+                    formAlertDiv.textContent = '&nbsp;';
+                    submitButton.disabled = false;
+                });
+            }
+        }
+    }
+</script>
+<script>
+    async function getRandomColor() {
+        const colorDiv = document.getElementById("color-div");
+        const colorHexInput = document.getElementById("colorHex");
+
+        if (colorDiv && colorHexInput) {
+            const response = await fetch('/api/random-color');
+            let colorHex = '#000000';
+
+            if (response && response.ok) {
+                const data = await response.json();
+                colorHex = data.colorHex;
+            }
+
+            colorHexInput.value = colorHex;
+            updatePage();
+        }
+    }
+</script>
 </body>
 </html>
