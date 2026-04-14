@@ -87,14 +87,18 @@
                     return new Promise((resolve) => {
                         setTimeout(resolve, 5_000);
                     });
-                }).catch((error) => {
-                    console.error(error);
-                }).finally(() => {
+                }).then(() => {
                     formAlertDiv.hidden = true;
                     formAlertDiv.classList.remove('alert-success');
                     formAlertDiv.classList.remove('alert-danger');
                     formAlertDiv.textContent = '\u00A0';
                     colorHexInput.value = '';
+                }).catch((error) => {
+                    console.error(error);
+                    formAlertDiv.className = 'alert alert-danger';
+                    formAlertDiv.textContent = 'Operation failed.';
+                    formAlertDiv.hidden = false;
+                }).finally(() => {
                     submitButton.disabled = false;
                     updatePage();
                 });
@@ -104,10 +108,9 @@
 </script>
 <script>
     async function getRandomColor() {
-        const colorDiv = document.getElementById('color-div');
         const colorHexInput = document.getElementById('colorHex');
 
-        if (colorDiv && colorHexInput) {
+        if (colorHexInput) {
             try {
                 const response = await fetch('/api/random-color');
                 let colorHex = '#000000';
