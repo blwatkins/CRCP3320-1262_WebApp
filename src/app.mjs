@@ -169,7 +169,7 @@ app.use((request, response, next) => {
 });
 
 app.use((error, request, response, next) => {
-    console.error(error)
+    console.error(error);
     response.status(500).send('Error 500: Internal Server Error.');
 });
 
