@@ -4,14 +4,12 @@
     <body style="height: 100vh;">
         <%- include('include/header-nav') %>
         <div class="container my-3 d-flex justify-content-center align-items-center" style="min-height: 85vh;">
+            <div id="canvas-data" data-tile-colors="<%= JSON.stringify(hexColors) %>"></div>
             <div id="canvas-container" class="text-center my-3">
             </div>
         </div>
         <%- include('include/footer-nav') %>
         <script src="https://cdn.jsdelivr.net/npm/p5@1.11.12/lib/p5.min.js"></script>
-        <script>
-            const tileColors = <%- JSON.stringify(hexColors) %>;
-        </script>
         <script src="/js/tiles.js"></script>
     </body>
 </html>
