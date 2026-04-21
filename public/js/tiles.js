@@ -10,6 +10,10 @@ function setup() {
         canvasContainer.appendChild(ctx.canvas);
     }
 
+    const canvasData = document.getElementById('canvas-data');
+    console.log(canvasData?.dataset.tileColors);
+    const tileColors = JSON.parse(canvasData?.dataset.tileColors ?? '[]') ?? [];
+
     grid = new TilesGrid(tileColors);
 }
 

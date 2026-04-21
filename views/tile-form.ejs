@@ -4,11 +4,28 @@
 <body style="height: 100vh;">
 <%- include('include/header-nav') %>
 <div class="container my-3 d-flex justify-content-center align-items-center" style="min-height: 85vh;">
-    <form>
-        <input type="color" class="form-control"/>
-        <input type="submit" class="btn btn-primary" value="Submit"/>
-    </form>
+    <div class="card" style="width: 20rem;">
+        <div id="color-div" style="height: 20rem; background-color: #FFFFFF;">
+            &nbsp;
+        </div>
+    </div>
+    <div>
+        <div class="mb-3 mx-3">
+            <label class="form-label" for="colorHex">Hex Color Code:</label>
+            <input type="text" class="form-control" id="colorHex" name="colorHex" minlength="7" maxlength="9" placeholder="#FFFFFF" required/>
+        </div>
+        <div class="mb-3 mx-3">
+            <button type="button" class="btn btn-outline-primary" id="random-color">Random Color</button>
+        </div>
+        <div class="mb-3 mx-3">
+            <input type="button" class="btn btn-outline-success" id="submit-button" value="Submit" disabled/>
+        </div>
+    </div>
+    <div id="form-alert" class="alert" role="alert" hidden>
+        &nbsp;
+    </div>
 </div>
 <%- include('include/footer-nav') %>
+<script src="/js/tile-form.js"></script>
 </body>
 </html>

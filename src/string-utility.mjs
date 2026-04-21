@@ -2,7 +2,7 @@ export class StringUtility {
     /**
      * @type {RegExp}
      */
-    static hexColorExpression = /^(#[0-9a-f-A-F]{6}|#[0-9a-f-A-F]{8})$/;
+    static hexColorExpression = /(^#[0-9a-fA-F]{6}$)|(^#[0-9a-fA-F]{8}$)/;
 
     /**
      * @param input

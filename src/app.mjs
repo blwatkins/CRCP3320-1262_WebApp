@@ -1,4 +1,8 @@
 import express from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+
+import { rateLimit } from 'express-rate-limit';
 
 import { ColorGenerator } from './color-generator.mjs';
 import { DateUtility } from './date-utility.mjs';
@@ -10,8 +14,34 @@ import { NumberUtility } from './number-utility.mjs';
 const app = express();
 const port = 3000;
 
+const limiter = rateLimit({
+    windowMs: 1000 * 60,
+    limit: 100,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    ipv6Subnet: 56
+});
+
+app.disable('x-powered-by');
+
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: [
+                "'self'"
+            ],
+            scriptSrc: [
+                "'self'",
+                'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/',
+                'https://cdn.jsdelivr.net/npm/p5@1.11.12/'
+            ]
+        }
+    }
+}));
+app.use(cors());
+app.use(limiter);
 app.use(express.static('public'));
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
@@ -132,6 +162,15 @@ app.post('/api/tile', async (request, response) => {
     } else if (result.status === 400 || result.status === 500) {
         return response.status(result.status).json({ error: result.message });
     }
+});
+
+app.use((request, response, next) => {
+    response.status(404).send('Error 404: Not Found.');
+});
+
+app.use((error, request, response, next) => {
+    console.error(error)
+    response.status(500).send('Error 500: Internal Server Error.');
 });
 
 app.listen(port, () => {
