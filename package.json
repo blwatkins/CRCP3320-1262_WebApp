@@ -27,9 +27,9 @@
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.61.0",
-    "ejs": "^5.0.1",
+    "ejs": "^5.0.2",
     "express": "^5.2.1",
-    "mysql2": "^3.21.0",
+    "mysql2": "^3.22.0",
     "sequelize": "^6.37.8"
   },
   "devDependencies": {
