@@ -12,7 +12,7 @@ import { StringUtility } from './string-utility.mjs';
 import { NumberUtility } from './number-utility.mjs';
 
 const app = express();
-const port = 3000;
+const port = Number.parseInt(process.env.PORT, 10) || 3000;
 
 const limiter = rateLimit({
     windowMs: 1000 * 60,
