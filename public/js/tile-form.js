@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 (() => {
     /**
@@ -12,9 +12,9 @@
     }
 
     function updatePage() {
-        const colorDiv = document.getElementById("color-div");
-        const colorHexInput = document.getElementById("colorHex");
-        const submitButton = document.getElementById("submit-button");
+        const colorDiv = document.getElementById('color-div');
+        const colorHexInput = document.getElementById('colorHex');
+        const submitButton = document.getElementById('submit-button');
 
         if (colorDiv && colorHexInput && submitButton) {
             const colorHexValue = colorHexInput.value;
@@ -42,7 +42,7 @@
                 fetch('/api/tile', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ colorHex: colorHexValue })
                 }).then((result) => {
@@ -101,9 +101,9 @@
         }
     }
 
-    const colorHexInput = document.getElementById("colorHex");
-    const randomColorButton = document.getElementById("random-color");
-    const submitButton = document.getElementById("submit-button");
+    const colorHexInput = document.getElementById('colorHex');
+    const randomColorButton = document.getElementById('random-color');
+    const submitButton = document.getElementById('submit-button');
 
     if (colorHexInput) {
         colorHexInput.addEventListener('input', updatePage);
