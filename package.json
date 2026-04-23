@@ -26,7 +26,7 @@
     "lint:all": "npm run lint:server && npm run lint:client"
   },
   "dependencies": {
-    "@dotenvx/dotenvx": "^1.61.5",
+    "@dotenvx/dotenvx": "^1.61.6",
     "cors": "^2.8.6",
     "ejs": "^5.0.2",
     "express": "^5.2.1",
